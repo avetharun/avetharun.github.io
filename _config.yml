@@ -1,9 +1,7 @@
-title: Just the Docs Template
-description: A starter template for a Jeykll site using the Just the Docs theme!
+title: "Feintha's Projects"
+description: Documentation and Portfolio for my projects
 # theme: just-the-docs
 remote_theme: g2forge/charcoal
 
-url: https://just-the-docs.github.io
+url: https://avetharun.github.io
 
-aux_links:
-  Template Repository: https://github.com/just-the-docs/just-the-docs-template
