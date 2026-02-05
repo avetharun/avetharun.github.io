@@ -30,6 +30,10 @@ Outputs are defined in the property pane as:
 or in the case of single parameters:
 `<output_name>,<target>,<input>,<param>,<delay>,<fire_multiple_times>`
 
+or, if multiple outputs are defined on each object, you can wrap them in brackets like this:
+`["<output...>", "<output 2...>"]
+
+
 * Note: the `fire_multiple_times` option is formatted as `0=once` and `1=indefinite`
 #### Output Targets
 - `!self` | `!caller` : Invokes the input on the object outputting from
