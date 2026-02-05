@@ -11,7 +11,7 @@ number_sections: true
 ---
 
 
-[Docs](/docs)
+[Blackbox Docs](/blackbox/docs)
 
 # Projects
 
