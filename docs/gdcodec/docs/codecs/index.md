@@ -18,18 +18,18 @@
 
 | <b>Codec</b> | <b>Description</b> | <b>Binary Representation</b> | <b>Notes</b> |
 | :--- | :--- | :--- | :--- |
-| <a id="codec-type-enum"></a>**`Codec.ENUM`** | Represents a [Godot enum](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#enums) as a 64-bit unsigned integer | `u64` |
-| <a id="codec-type-long"></a>**`Codec.LONG`** | Represents a 64-bit unsigned integer | `u64` |
-| <a id="codec-type-int"></a>**`Codec.INT`** | Represents a 32-bit unsigned integer | `u32` |
-| <a id="codec-type-short"></a>**`Codec.SHORT`** | Represents a 16-bit unsigned integer | `u16` |
-| <a id="codec-type-byte"></a>**`Codec.BYTE`** | Represents an 8-bit unsigned integer | `u8` |
-| <a id="codec-type-signed_long"></a>**`Codec.SIGNED_LONG`** | Represents a 64-bit signed integer | `s64` |
-| <a id="codec-type-signed_int"></a>**`Codec.SIGNED_INT`** | Represents a 32-bit signed integer | `s32` |
-| <a id="codec-type-signed_short"></a>**`Codec.SIGNED_SHORT`** | Represents a 16-bit signed integer | `s16` |
-| <a id="codec-type-signed_byte"></a>**`Codec.SIGNED_BYTE`** | Represents an 8-bit signed integer | `s8` |
-| <a id="codec-type-double"></a>**`Codec.DOUBLE`** | Represents a 64-bit floating-point value | `f64` |
-| <a id="codec-type-float"></a>**`Codec.FLOAT`** | Represents a 32-bit floating-point value | `f32` |
-| <a id="codec-type-bool"></a>**`Codec.BOOL`** | Represents a Boolean (8-bit unsigned; not a bitmask) | `u8` (`0` or `1`) |
+| <a id="codec-type-enum"></a>**`Codec.ENUM`** | Represents a [Godot enum](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#enums) as a 64-bit unsigned integer | `u64` | |
+| <a id="codec-type-long"></a>**`Codec.LONG`** | Represents a 64-bit unsigned integer | `u64` | |
+| <a id="codec-type-int"></a>**`Codec.INT`** | Represents a 32-bit unsigned integer | `u32` | |
+| <a id="codec-type-short"></a>**`Codec.SHORT`** | Represents a 16-bit unsigned integer | `u16` | |
+| <a id="codec-type-byte"></a>**`Codec.BYTE`** | Represents an 8-bit unsigned integer | `u8` | |
+| <a id="codec-type-signed_long"></a>**`Codec.SIGNED_LONG`** | Represents a 64-bit signed integer | `s64` | |
+| <a id="codec-type-signed_int"></a>**`Codec.SIGNED_INT`** | Represents a 32-bit signed integer | `s32` | |
+| <a id="codec-type-signed_short"></a>**`Codec.SIGNED_SHORT`** | Represents a 16-bit signed integer | `s16` | |
+| <a id="codec-type-signed_byte"></a>**`Codec.SIGNED_BYTE`** | Represents an 8-bit signed integer | `s8` | |
+| <a id="codec-type-double"></a>**`Codec.DOUBLE`** | Represents a 64-bit floating-point value | `f64` | |
+| <a id="codec-type-float"></a>**`Codec.FLOAT`** | Represents a 32-bit floating-point value | `f32` | |
+| <a id="codec-type-bool"></a>**`Codec.BOOL`** | Represents a Boolean (8-bit unsigned; not a bitmask) | `u8` (`0` or `1`) | |
 | <a id="codec-type-string"></a>**`Codec.STRING`** | Represents a length-prefixed [String](https://docs.godotengine.org/en/stable/classes/class_string.html) | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-string_name"></a>**`Codec.STRING_NAME`** | Represents a [StringName](https://docs.godotengine.org/en/stable/classes/class_stringname.html), encoded as a string | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-long_array"></a>**`Codec.LONG_ARRAY`** | Represents an array of uint64 values | `len_t`, followed by `u64` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
@@ -44,17 +44,17 @@
 | <a id="codec-type-bool_array"></a>**`Codec.BOOL_ARRAY`** | Represents an array of Booleans | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-string_array"></a>**`Codec.STRING_ARRAY`** | Represents an array of length-prefixed strings | `len_t`, followed by length-prefixed string elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-byte_array"></a>**`Codec.BYTE_ARRAY`** | Represents an array of uint8 values | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
-| <a id="codec-type-color"></a>**`Codec.COLOR`** | Represents an [RGBA8](https://docs.godotengine.org/en/stable/classes/class_color.html) color | `u32` |
-| <a id="codec-type-color_hdr"></a>**`Codec.COLOR_HDR`** | Represents an [RGBA](https://docs.godotengine.org/en/stable/classes/class_color.html) color as 32-bit floats | `[f32, f32, f32, f32]` |
-| <a id="codec-type-vector2"></a>**`Codec.VECTOR2`** | Represents a [Vector2](https://docs.godotengine.org/en/stable/classes/class_vector2.html) | `[f32, f32]` |
-| <a id="codec-type-vector2i"></a>**`Codec.VECTOR2I`** | Represents a [Vector2i](https://docs.godotengine.org/en/stable/classes/class_vector2i.html) | `[s32, s32]` |
-| <a id="codec-type-vector3"></a>**`Codec.VECTOR3`** | Represents a [Vector3](https://docs.godotengine.org/en/stable/classes/class_vector3.html) | `[f32, f32, f32]` |
-| <a id="codec-type-vector3i"></a>**`Codec.VECTOR3I`** | Represents a [Vector3i](https://docs.godotengine.org/en/stable/classes/class_vector3i.html) | `[s32, s32, s32]` |
-| <a id="codec-type-quaternion"></a>**`Codec.QUATERNION`** | Represents a [Quaternion](https://docs.godotengine.org/en/stable/classes/class_quaternion.html) | `[f32, f32, f32, f32]` |
-| <a id="codec-type-variant"></a>**`Codec.VARIANT`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes) |
-| <a id="codec-type-variant_with_objects"></a>**`Codec.VARIANT_WITH_OBJECTS`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding (With Objects)](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes-with-objects) |
-| <a id="codec-type-bitmask_8"></a>**`Codec.BITMASK_8`** | Represents an 8-bit bitmask | `u8` | [Bitmask Usage](#bitmask)
-| | |
+| <a id="codec-type-color"></a>**`Codec.COLOR`** | Represents an [RGBA8](https://docs.godotengine.org/en/stable/classes/class_color.html) color | `u32` | |
+| <a id="codec-type-color_hdr"></a>**`Codec.COLOR_HDR`** | Represents an [RGBA](https://docs.godotengine.org/en/stable/classes/class_color.html) color as 32-bit floats | `[f32, f32, f32, f32]` | |
+| <a id="codec-type-vector2"></a>**`Codec.VECTOR2`** | Represents a [Vector2](https://docs.godotengine.org/en/stable/classes/class_vector2.html) | `[f32, f32]` | |
+| <a id="codec-type-vector2i"></a>**`Codec.VECTOR2I`** | Represents a [Vector2i](https://docs.godotengine.org/en/stable/classes/class_vector2i.html) | `[s32, s32]` | |
+| <a id="codec-type-vector3"></a>**`Codec.VECTOR3`** | Represents a [Vector3](https://docs.godotengine.org/en/stable/classes/class_vector3.html) | `[f32, f32, f32]` | |
+| <a id="codec-type-vector3i"></a>**`Codec.VECTOR3I`** | Represents a [Vector3i](https://docs.godotengine.org/en/stable/classes/class_vector3i.html) | `[s32, s32, s32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.QUATERNION`** | Represents a [Quaternion](https://docs.godotengine.org/en/stable/classes/class_quaternion.html) | `[f32, f32, f32, f32]` | |
+| <a id="codec-type-variant"></a>**`Codec.VARIANT`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes) | |
+| <a id="codec-type-variant_with_objects"></a>**`Codec.VARIANT_WITH_OBJECTS`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding (With Objects)](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes-with-objects) | |
+| <a id="codec-type-bitmask_8"></a>**`Codec.BITMASK_8`** | Represents an 8-bit bitmask | `u8` | [Bitmask Usage](#bitmask) |
+
 <a id="codec-methods"></a>
 ## Codec Methods
 
