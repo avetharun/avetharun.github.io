@@ -195,15 +195,59 @@ static var IMAGE_CODEC : Codec = Codec.bicast([
 
 # Sub-classes and Enums
 <a id="codec-sub-enum-lengthencoding"></a>
-
-| <h1>Enum</h1> |  |  |
-| :--- | :--- | :--- |
-| <h2>Codec.LengthEncoding</h2> | <h3>Field<hr></h3> | <h3>Description<hr></h3> |
-| | <a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`** | Represents a length as a `u8` |
-| | <a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`** | Represents a length as a `u16` |
-| | <a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`** | Represents a length as a `u32` |
-| | <a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`** | Represents a length as a `u64` |
-| <h2>Codec.FieldType</h2> | <h3>Field<hr></h3> | <h3>Description<hr></h3> |
-| | <a id="codec-fieldtype-method"></a>**`Codec.FieldType.Method`** | Will attempt to use the method name using `instance.call(field)` |
-| | <a id="codec-fieldtype-field"></a>**`Codec.FieldType.Field`** | Will attempt to use the field name using `instance.get(field)` |
-| | | |
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left;"><h1>Enum</h1></th>
+      <th style="text-align: left;"></th>
+      <th style="text-align: left;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left;"><h2>Codec.LengthEncoding</h2></td>
+      <td style="text-align: left;"><h3>Field<hr></h3></td>
+      <td style="text-align: left;"><h3>Description<hr></h3></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`**</td>
+      <td style="text-align: left;">Represents a length as a `u8`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`**</td>
+      <td style="text-align: left;">Represents a length as a `u16`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`**</td>
+      <td style="text-align: left;">Represents a length as a `u32`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`**</td>
+      <td style="text-align: left;">Represents a length as a `u64`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"><h2>Codec.FieldType</h2></td>
+      <td style="text-align: left;"><h3>Field<hr></h3></td>
+      <td style="text-align: left;"><h3>Description<hr></h3></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-fieldtype-method"></a>**`Codec.FieldType.Method`**</td>
+      <td style="text-align: left;">Will attempt to use the method name using `instance.call(field)`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-fieldtype-field"></a>**`Codec.FieldType.Field`**</td>
+      <td style="text-align: left;">Will attempt to use the field name using `instance.get(field)`</td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"></td>
+    </tr>
+  </tbody>
+</table>
