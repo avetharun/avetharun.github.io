@@ -101,6 +101,7 @@ Any missing elements in the array will be filled with the default element: `fals
 
 Any elements past 8 (ie, index 9) will be ignored. To bypass this, you can use either of the following snippets:
 <a id="codec-example-bitmask_8-nested"></a>
+
 ```gdscript
 ## num_bytes should be the number of bits / 8,
 ## or however many bitmasks need to be joined together.
@@ -113,6 +114,7 @@ CodecOpBytes.encode(
 ```
 <a id="codec-example-bitmask_8"></a>
 Example of usage:
+
 ```gdscript
 CodecOpBytes.encode(Codec.BITMASK_8, [true, true, false, true, false])
 ## -> \xD0 or 0b11010000
@@ -132,6 +134,7 @@ Each method has its own upsides and downsides.
 <br>For types you create yourself, it's recommended to use [`bicast`](#codec-method-bicast)
 <a id="codec-examples-encoding-an-object-using-xmap"></a>
 #### Using [`xmap`](#codec-method-xmap), [`smap`](#codec-method-smap), or [`rmap`](#codec-method-rmap) for Encoding and Decoding
+
 ```gdscript
 static var PLANE_CODEC : Codec = Codec.join(Codec.VECTOR3, Codec.FLOAT).xmap(
     func(plane:Plane) -> Array: ## Array is used for Codec.join
@@ -174,7 +177,6 @@ class MyClass extends Resource:
 #### Using [`bicast`](#codec-method-bicast) on Classes you control work very similarly to how [Resource-based bicast](#codec-examples-encoding-an-object-using-bicast-custom-resources) works.
 
 ```gdscript
-
 static func create_new_image_packed(
 	width:int,
 	height:int,
@@ -194,14 +196,14 @@ static var IMAGE_CODEC : Codec = Codec.bicast([
 # Sub-classes and Enums
 <a id="codec-sub-enum-lengthencoding"></a>
 
-| <h>Enum</h> | <b>Field</b> | <b>Description</b> 
+| <h1>Enum</h1> |  |  |
 | :--- | :--- | :--- |
-| <h>Codec.LengthEncoding</h> | | |
+| <h2>Codec.LengthEncoding</h2> | <h3>Field<hr></h3> | <h3>Description<hr></h3> |
 | | <a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`** | Represents a length as a `u8` |
 | | <a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`** | Represents a length as a `u16` |
 | | <a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`** | Represents a length as a `u32` |
 | | <a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`** | Represents a length as a `u64` |
-| <h>Codec.FieldType</h> | | |
+| <h2>Codec.FieldType</h2> | <h3>Field<hr></h3> | <h3>Description<hr></h3> |
 | | <a id="codec-fieldtype-method"></a>**`Codec.FieldType.Method`** | Will attempt to use the method name using `instance.call(field)` |
 | | <a id="codec-fieldtype-field"></a>**`Codec.FieldType.Field`** | Will attempt to use the field name using `instance.get(field)` |
 | | | |
