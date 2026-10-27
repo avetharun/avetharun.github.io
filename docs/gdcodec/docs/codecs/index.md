@@ -47,7 +47,7 @@
 
 ## Codec Methods
 
-| Method Name | Description | Returns |
+| <b>Method Name</b> | <b>Description</b> | <b>Returns</b> |
 | :--- | :--- | :--- |
 | <sup>**`static span(codec:Codec, length:int, default:Variant)`**</sup> | Constant-length codec of a given type.<br><i><sup> Note: The default value must be encodable by the codec supplied.</sup></i> | `Codec` |
 | <sup>**`static byte_span(length:int)`**</sup> | Constant-length codec of bytes.<br><i><sup>Note: Does not include a length prefix</sup></i> | `Codec` |
