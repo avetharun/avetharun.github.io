@@ -11,8 +11,6 @@ number_sections: true
 ---
 
 
-[Blackbox Docs](docs/blackbox/docs/)
+<!-- [Blackbox Docs](docs/blackbox/docs/) <!-- Not fully ready for publish. Sorry! --> -->
 
-# Projects
 
-## DPU
