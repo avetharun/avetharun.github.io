@@ -67,7 +67,7 @@
 | <a id="codec-method-rmap"></a><sup><span style="white-space: nowrap;">**`rmap(decoder:Callable)`**</span></sup> | Converts the result(Decoded) into another type<br><sup><i>[View Example](#codec-example-rmap) | `Codec` |
 | <a id="codec-method-smap"></a><sup><span style="white-space: nowrap;">**`smap(encoder:Callable)`**</span></sup> | Converts the source(Encoded) into another type<br><sup><i>[View Example](#codec-example-smap) | `Codec` |
 | <a id="codec-method-xmap"></a><sup><span style="white-space: nowrap;">**`xmap(decoder:Callable, encoder:Callable)`**</span></sup> | Converts the result(Decoded) into another type<br>and converts it back before encoding<br><sup><i>[View Example](#codec-example-xmap) | `Codec` |
-| <a id="codec-method-bicast"></a><sup><span style="white-space: nowrap;">**`bicast(bi_pairs:Array, c_type:Script)`**</span></sup> | Creates a `Codec` that maps field codecs<br>to and from instances of `type`<br><sup><i>[View Example](#codec-example-bicast)<br>The `bi_pairs` param must use the following format:<br>&emsp;&emsp;- `[CODEC_TYPE, &"field_name"]`<br>&emsp;&emsp;- `[CODEC_TYPE, Codec.field(&"field_name", Codec.FieldType.Field)]`<br>&emsp;&emsp;- `[CODEC_TYPE, Codec.field(&"get_field", Codec.FieldType.Method)]` <br>&emsp;<a id="codec-method-bicast-custom-constructor"></a>To specify a custom constructor (ie, for `Resources`)<br>&emsp;use the following function:<br>&emsp;<sup>`codec.bicast([...], MyType, MyType.my_custom_constructor)`<br>&emsp;&emsp;- See:[Using bicast on Resource-based Classes](#using-bicast-on-resource-based-classes-you-control)</sup> | `Codec` |
+| <a id="codec-method-bicast"></a><sup><span style="white-space: nowrap;">**`bicast(bi_pairs:Array, c_type:Script\|Type)`**</span></sup> | Creates a `Codec` that maps field codecs<br>to and from instances of `type`<br><sup><i>[View Example](#codec-example-bicast)<br>- c_type must either be a `Script` or a non-script `Type` (ie. GDExtension class)<br>&emsp;- The custom constructor must be used for non-script types<br>- The `bi_pairs` param must use the following format:<br>&emsp;&emsp;- `[CODEC_TYPE, &"field_name"]`<br>&emsp;&emsp;- `[CODEC_TYPE, Codec.field(&"field_name", Codec.FieldType.Field)]`<br>&emsp;&emsp;- `[CODEC_TYPE, Codec.field(&"get_field", Codec.FieldType.Method)]` <br>&emsp;<a id="codec-method-bicast-custom-constructor"></a>- To specify a custom constructor (ie, for `Resources`)<br>&emsp;use the following function:<br>&emsp;<sup>`codec.bicast([...], MyType, MyType.my_custom_constructor)`<br>&emsp;&emsp;- See:[Using bicast on Resource-based Classes](#using-bicast-on-resource-based-classes-you-control)</sup> | `Codec` |
 | <a id="codec-method-with_length_encoding"></a><sup><span style="white-space: nowrap;">**`with_length_encoding(encoding:Codec.LengthEncoding)`**</span></sup> | Sets the encoding format for length-prefixed `Codecs`<br><i><sup>See: [Codec Length Specifiers](#codec-info-len_t) | `Codec` |
 | <a id="codec-method-with_optional"></a><sup><span style="white-space: nowrap;">**`with_optional(default:Variant)`**</span></sup> | Sets this codec to be Optional.<br><i><sup>Note: Identical to calling [`Codec.optional(this_codec, default)`](#codec-method-optional)<br>See: [`Codec.optional`](#codec-method-optional) | `Codec` |
 | <a id="codec-method-with_nullable"></a><sup><span style="white-space: nowrap;">**`with_optional(default:Variant)`**</span></sup> | Sets this codec to be Nullable.<br><i><sup>Note: Identical to calling [`Codec.nullable(this_codec)`](#codec-method-nullable)<br>See: [`Codec.nullable`](#codec-method-nullable) and [`Codec.optional`](#codec-method-optional) | `Codec` |
@@ -181,20 +181,24 @@ static func create_new_image_packed(
 	width:int,
 	height:int,
 	use_mipmaps:bool,
-	format:Image.Format,
+	format:int,
 	data:PackedByteArray
 ) -> Image:
-	return Image.create_from_data(width, height, use_mipmaps, format, data)
+	return Image.create_from_data(width, height, use_mipmaps, format as Image.Format, data)
 
 static var IMAGE_CODEC : Codec = Codec.bicast([
-    Codec.INT, Codec.field(Image.)
+    Codec.INT, Codec.field("get_width", Codec.FieldType.Method),
+    Codec.INT, Codec.field("get_height", Codec.FieldType.Method),
+    Codec.BOOL, Codec.field("has_mipmaps", Codec.FieldType.Method),
+    Codec.INT, Codec.field("get_format", Codec.FieldType.Method),
+    Codec.PACKED_BYTE_ARRAY, Codec.field("get_data", Codec.FieldType.Method),
 ], Image, create_new_image_packed)
 ```
 
 <a id="codec-sub-classes-and-enums"></a>
 
 # Sub-classes and Enums
-<a id="codec-sub-enum-lengthencoding"></a>
+<!-- This is the most hideous thing I've ever seen in markdown, but it gets what I want to display across, unlike Markdown itself. -->
 <table>
   <thead>
     <tr>
@@ -205,44 +209,44 @@ static var IMAGE_CODEC : Codec = Codec.bicast([
   </thead>
   <tbody>
     <tr>
-      <td style="text-align: left;"><h2>Codec.LengthEncoding</h2></td>
+      <td style="text-align: left;"><h2><a id="codec-sub-enum-lengthencoding"></a>Codec.LengthEncoding<hr></h2></td>
       <td style="text-align: left;"><h3>Field<hr></h3></td>
       <td style="text-align: left;"><h3>Description<hr></h3></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`**</td>
-      <td style="text-align: left;">Represents a length as a `u8`</td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int8"></a><b><code class="language-plaintext highlighter-rouge">Codec.LengthEncoding.INT8</code></b></td>
+      <td style="text-align: left;">Represents a length as a <code class="language-plaintext highlighter-rouge">u8</code></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`**</td>
-      <td style="text-align: left;">Represents a length as a `u16`</td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int16"></a><b><code class="language-plaintext highlighter-rouge">Codec.LengthEncoding.INT16</code></b></td>
+      <td style="text-align: left;">Represents a length as a <code class="language-plaintext highlighter-rouge">u16</code></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`**</td>
-      <td style="text-align: left;">Represents a length as a `u32`</td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int32"></a><b><code class="language-plaintext highlighter-rouge">Codec.LengthEncoding.INT32</code></b></td>
+      <td style="text-align: left;">Represents a length as a <code class="language-plaintext highlighter-rouge">u32</code></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`**</td>
-      <td style="text-align: left;">Represents a length as a `u64`</td>
+      <td style="text-align: left;"><a id="codec-lengthencoding-int64"></a><b><code class="language-plaintext highlighter-rouge">Codec.LengthEncoding.INT64</code></b></td>
+      <td style="text-align: left;">Represents a length as a <code class="language-plaintext highlighter-rouge">u64</code></td>
     </tr>
     <tr>
-      <td style="text-align: left;"><h2>Codec.FieldType</h2></td>
+      <td style="text-align: left;"><h2><a id="codec-sub-enum-fieldtype"></a>Codec.FieldType<hr></h2></td>
       <td style="text-align: left;"><h3>Field<hr></h3></td>
       <td style="text-align: left;"><h3>Description<hr></h3></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-fieldtype-method"></a>**`Codec.FieldType.Method`**</td>
-      <td style="text-align: left;">Will attempt to use the method name using `instance.call(field)`</td>
+      <td style="text-align: left;"><a id="codec-fieldtype-method"></a><b><code class="language-plaintext highlighter-rouge">Codec.FieldType.Method</code></b></td>
+      <td style="text-align: left;">Will attempt to use the method name using <code class="language-plaintext highlighter-rouge">instance.call(field)</code></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
-      <td style="text-align: left;"><a id="codec-fieldtype-field"></a>**`Codec.FieldType.Field`**</td>
-      <td style="text-align: left;">Will attempt to use the field name using `instance.get(field)`</td>
+      <td style="text-align: left;"><a id="codec-fieldtype-field"></a><b><code class="language-plaintext highlighter-rouge">Codec.FieldType.Field</code></b></td>
+      <td style="text-align: left;">Will attempt to use the field name using <code class="language-plaintext highlighter-rouge">instance.get(field)</code></td>
     </tr>
     <tr>
       <td style="text-align: left;"></td>
