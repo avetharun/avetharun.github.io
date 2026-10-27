@@ -9,6 +9,9 @@
 - [Examples](#codec-examples)
 - [Encoding an Object](#codec-examples-encoding-an-object)
 - [Creating a custom Codec by hand](#codec-examples-creating-a-custom-codec-by-hand)
+- [Class Codec.CodecBiRef](#codec-sub-class-codecbiref)
+- [Enum Codec.LengthEncoding](#codec-sub-enum-lengthencoding)
+- [Enum Codec.FieldType](#codec-sub-enum-fieldtype)
 
 <a id="codec-types"></a>
 ## List of Codecs
@@ -89,20 +92,6 @@
 
 <a id="codec-info-header"></a>
 ## Notes and Extra Info
-<a id="codec-info-len_t"></a>
-### Codec Length Specifier (len_t)
-
-`len_t` can be modified with `with_length_encoding` using the following flags:
-
-| <b>Length Encoding</b> | <b>Description</b> | <b>Binary Representation</b> |
-| :--- | :--- | :--- |
-| <a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`** | Represents a length as a `u8` | `u8` |
-| <a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`** | Represents a length as a `u16` | `u16` |
-| <a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`** | Represents a length as a `u32` | `u32` |
-| <a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`** | Represents a length as a `u64` | `u64` |
-| | |
-
-Note: **[`Codec.LengthEncoding.INT64`](#codec-lengthencoding-int64)** is the default length encoding.
 
 <a id="codec-info-bitmask_8"></a>
 ### Bitmask
@@ -199,3 +188,20 @@ static var IMAGE_CODEC : Codec = Codec.bicast([
     Codec.INT, Codec.field(Image.)
 ], Image, create_new_image_packed)
 ```
+
+<a id="codec-sub-classes-and-enums"></a>
+
+# Sub-classes and Enums
+<a id="codec-sub-enum-lengthencoding"></a>
+
+| <h>Enum</h> | <b>Field</b> | <b>Description</b> 
+| :--- | :--- | :--- |
+| <h>Codec.LengthEncoding</h> | | |
+| | <a id="codec-lengthencoding-int8"></a>**`Codec.LengthEncoding.INT8`** | Represents a length as a `u8` |
+| | <a id="codec-lengthencoding-int16"></a>**`Codec.LengthEncoding.INT16`** | Represents a length as a `u16` |
+| | <a id="codec-lengthencoding-int32"></a>**`Codec.LengthEncoding.INT32`** | Represents a length as a `u32` |
+| | <a id="codec-lengthencoding-int64"></a>**`Codec.LengthEncoding.INT64`** | Represents a length as a `u64` |
+| <h>Codec.FieldType</h> | | |
+| | <a id="codec-fieldtype-method"></a>**`Codec.FieldType.Method`** | Will attempt to use the method name using `instance.call(field)` |
+| | <a id="codec-fieldtype-field"></a>**`Codec.FieldType.Field`** | Will attempt to use the field name using `instance.get(field)` |
+| | | |
