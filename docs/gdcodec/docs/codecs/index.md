@@ -1,11 +1,16 @@
 # Codec Class
-<b>The Codec class is the wrapper around encoding and decoding from and to buffers.</b><br>
+<b>The Codec class is the wrapper around encoding and decoding to and from buffers.</b><br>
+
 - [List of Codecs](#list-of-codecs)
 - [Codec Methods](#codec-methods)
+- [Examples](#examples)
+- [Encoding an Object](#encoding-an-object)
+- [Creating a custom Codec by hand](#creating-a-custom-codec-by-hand)
+
 
 ## List of Codecs
 
-| Codec | Description | Binary Representation | Notes |
+| <b>Codec</b> | <b>Description</b> | <b>Binary Representation</b> | <b>Notes</b> |
 | :--- | :--- | :--- | :--- |
 | **`Codec.ENUM`** | Represents a [Godot enum](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#enums) as a 64-bit unsigned integer | `u64` |
 | **`Codec.LONG`** | Represents a 64-bit unsigned integer | `u64` |
@@ -49,28 +54,28 @@
 
 | <b>Method Name</b> | <b>Description</b> | <b>Returns</b> |
 | :--- | :--- | :--- |
-| <sup>**`static span(codec:Codec, length:int, default:Variant)`**</sup> | Constant-length codec of a given type.<br><i><sup> Note: The default value must be encodable by the codec supplied.</sup></i> | `Codec` |
-| <sup>**`static byte_span(length:int)`**</sup> | Constant-length codec of bytes.<br><i><sup>Note: Does not include a length prefix</sup></i> | `Codec` |
-| <sup>**`static nullable(codec:Codec)`**</sup> | Creates a codec for a "nullable" value. <br><i><sup>Note<sup>1</sup>: Wrapper for [`Codec.optional`](#codec-method-optional)<br>Note<sup>2</sup>: The value represented by this codec must be assignable by null</sup></i> | `Codec` |
-| <a id="codec-method-optional"></a><sup>**`static optional(codec:Codec, default:Variant)`**</sup> | Creates a codec for an "optional" value.<br><i><sup>Note: the default value must be encodable by the codec supplied.</sup></i> | `Codec` |
-| <sup>**`static constant(value:Variant)`**</sup> | Creates a non-encodable (zero-width) codec that<br>always decodes to the value supplied. | `Codec` |
-| <sup>**`static padding(length:int)`**</sup> | Creates a codec that will insert `length` bytes<br>into the resulting `Codec`<br><i><sup>Note: Decoding returns null, and will ignore any encoded value.</sup></i>| `Codec` |
-| <sup>**`static either(tag_codec:Codec, codecs:Array)`**</sup> | Creates a "tagged" union `Codec`. <br>Values use the form `[tag, value]` and the `tag`<br> selects the codec to use. | `Codec` |
-| <sup>**`static join(codecs:Array)`**</sup> | Creates a fixed-sequence codec.<br>Values are encoded and decoded as an array<br>matching the order of codecs. | `Codec` |
-| <sup>**`static limited_string(max_length:int)`**</sup> | Creates a codec that represents a length-prefixed<br>string with a max length<br><i><sup>Note: if the string exceeds the length, an error will occur.</i></sup> | `Codec` |
-| <sup>**`static arrayof(codec:Codec)`**</sup> | Creates a length-prefixed array of Codecs. | `Codec`|
-| <sup>**`static limited_array(codec:Codec, max_length:int)`**</sup> | Creates a length-prefixed array of Codecs that<br> reject more than `max_length` elements. | `Codec` |
-| <sup>**`static mapof(key_codec:Codec, value_codec:Codec)`**</sup> | Creates a length-prefixed map `Codec` using separate<br> Codecs for keys and values.<br><i><sup>Note: Effectively just a Dictionary wrapper for codecs </sup></i> | `Codec` |
-| <sup>**`static record(fields:Dictionary)`**</sup> | Creates a record codec that encodes fields in <br>the dictionary's declaration order.<br><i><sup>Note: This can be used to serialize from and to class objects</i></sup> | `Codec` |
-| <sup>**`static enum_string(enum_type:Variant, default:int = -1)`**</sup> | Creates a `Codec` that represents an Enum as a String<br><i><sup>Note<sup>1</sup>: By default, forced case is disabled<br>&emsp;(ie `some_key` and `SOME_KEY` will map to the same value)<br>&emsp;To change this, use `Codec.enum_string(MyEnum, MyEnum.Default, forced_case:bool)`<br>Note<sup>2</sup>: To avoid conflicts, modify `default_key` if you have an<br>&emsp;element named `__INVALID__`:<br>&emsp;`Codec.enum_string(MyEnum, MyEnum.Default, forced_case, default_key:String)`
-| <sup>**`static get_enum_string_value(enum_type:Variant, key:String, fallback:int = -1)`**</sup> | Returns the 
+| <sup><span style="white-space: nowrap;">**`static span(codec:Codec, length:int, default:Variant)`**</span></sup> | Constant-length codec of a given type.<br><i><sup> Note: The default value must be encodable by the codec supplied.</sup></i> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static byte_span(length:int)`**</span></sup> | Constant-length codec of bytes.<br><i><sup>Note: Does not include a length prefix</sup></i> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static nullable(codec:Codec)`**</span></sup> | Creates a codec for a "nullable" value. <br><i><sup>Note<sup>1</sup>: Wrapper for [`Codec.optional`](#codec-method-optional)<br>Note<sup>2</sup>: The value represented by this codec must be assignable by null</sup></i> | `Codec` |
+| <a id="codec-method-optional"></a><sup><span style="white-space: nowrap;">**`static optional(codec:Codec, default:Variant)`**</span></sup> | Creates a codec for an "optional" value.<br><i><sup>Note: the default value must be encodable by the codec supplied.</sup></i> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static constant(value:Variant)`**</span></sup> | Creates a non-encodable (zero-width) codec that<br>always decodes to the value supplied. | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static padding(length:int)`**</span></sup> | Creates a codec that will insert `length` bytes<br>into the resulting `Codec`<br><i><sup>Note: Decoding returns null, and will ignore any encoded value.</sup></i>| `Codec` |
+| <sup><span style="white-space: nowrap;">**`static either(tag_codec:Codec, codecs:Array)`**</span></sup> | Creates a "tagged" union `Codec`. <br>Values use the form `[tag, value]` and the `tag`<br> selects the codec to use. | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static join(codecs:Array)`**</span></sup> | Creates a fixed-sequence codec.<br>Values are encoded and decoded as an array<br>matching the order of codecs. | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static limited_string(max_length:int)`**</span></sup> | Creates a codec that represents a length-prefixed<br>string with a max length<br><i><sup>Note: if the string exceeds the length, an error will occur.</i></sup> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static arrayof(codec:Codec)`**</span></sup> | Creates a length-prefixed array of Codecs. | `Codec`|
+| <sup><span style="white-space: nowrap;">**`static limited_array(codec:Codec, max_length:int)`**</span></sup> | Creates a length-prefixed array of Codecs that<br> reject more than `max_length` elements. | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static mapof(key_codec:Codec, value_codec:Codec)`**</span></sup> | Creates a length-prefixed map `Codec` using separate<br> Codecs for keys and values.<br><i><sup>Note: Effectively just a Dictionary wrapper for codecs </sup></i> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static record(fields:Dictionary)`**</span></sup> | Creates a record codec that encodes fields in <br>the dictionary's declaration order.<br><i><sup>Note: This can be used to serialize from and to class objects</i></sup> | `Codec` |
+| <sup><span style="white-space: nowrap;">**`static enum_string(enum_type:Variant, default:int = -1)`**</span></sup> | Creates a `Codec` that represents an Enum as a String<br><i><sup>Note<sup>1</sup>: By default, forced case is disabled<br>&emsp;(ie `some_key` and `SOME_KEY` will map to the same value)<br>&emsp;To change this, use `Codec.enum_string(MyEnum, MyEnum.Default, forced_case:bool)`<br>Note<sup>2</sup>: To avoid conflicts, modify `default_key` if you have an<br>&emsp;element named `__INVALID__`:<br>&emsp;`Codec.enum_string(MyEnum, MyEnum.Default, forced_case, default_key:String)`
+| <sup><span style="white-space: nowrap;">**`static get_enum_string_value(enum_type:Variant, key:String, fallback:int = -1)`**</span></sup> | Returns the
 
 ## Notes and Extra Info
 ### Codec Length Specifier (len_t)
 
 `len_t` can be modified with `with_length_encoding` using the following flags:
 
-| Length Encoding | Description | Binary Representation |
+| <b>Length Encoding</b> | <b>Description</b> | <b>Binary Representation</b> |
 | :--- | :--- | :--- |
 | **`Codec.LengthEncoding.INT8`** | Represents a length as a `u8` | `u8` |
 | **`Codec.LengthEncoding.INT16`** | Represents a length as a `u16` | `u16` |
