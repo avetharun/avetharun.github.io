@@ -17,7 +17,7 @@
 ## List of Codecs
 
 | <b>Codec</b> | <b>Description</b> | <b>Binary Representation</b> | <b>Notes</b> |
-| :--- | :--- | :--- | :--- |
+| :--- | :--- | :--- | ---: |
 | <a id="codec-type-enum"></a>**`Codec.ENUM`** | Represents a [Godot enum](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#enums) as a 64-bit unsigned integer | `u64` | |
 | <a id="codec-type-long"></a>**`Codec.LONG`** | Represents a 64-bit unsigned integer | `u64` | |
 | <a id="codec-type-int"></a>**`Codec.INT`** | Represents a 32-bit unsigned integer | `u32` | |
@@ -32,6 +32,7 @@
 | <a id="codec-type-bool"></a>**`Codec.BOOL`** | Represents a Boolean (8-bit unsigned; not a bitmask) | `u8` (`0` or `1`) | |
 | <a id="codec-type-string"></a>**`Codec.STRING`** | Represents a length-prefixed [String](https://docs.godotengine.org/en/stable/classes/class_string.html) | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-string_name"></a>**`Codec.STRING_NAME`** | Represents a [StringName](https://docs.godotengine.org/en/stable/classes/class_stringname.html), encoded as a string | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
+| <a id="codec-type-string_name"></a>**`Codec.NODE_PATH`** | Represents a [NodePath](https://docs.godotengine.org/en/stable/classes/class_nodepath.html), encoded as a string | `len_t`, followed by `u8` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-long_array"></a>**`Codec.LONG_ARRAY`** | Represents an array of uint64 values | `len_t`, followed by `u64` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-int_array"></a>**`Codec.INT_ARRAY`** | Represents an array of uint32 values | `len_t`, followed by `u32` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
 | <a id="codec-type-short_array"></a>**`Codec.SHORT_ARRAY`** | Represents an array of uint16 values | `len_t`, followed by `u16` elements | <sup>Notes: [len_t](#codec-info-len_t)</sup> |
@@ -54,6 +55,13 @@
 | <a id="codec-type-variant"></a>**`Codec.VARIANT`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes) | |
 | <a id="codec-type-variant_with_objects"></a>**`Codec.VARIANT_WITH_OBJECTS`** | Represents a native Godot [Variant](https://docs.godotengine.org/en/stable/classes/class_variant.html) | [Godot Variant encoding (With Objects)](https://docs.godotengine.org/en/4.7/classes/class_@globalscope.html#class-globalscope-method-var-to-bytes-with-objects) | |
 | <a id="codec-type-bitmask_8"></a>**`Codec.BITMASK_8`** | Represents an 8-bit bitmask | `u8` | [Bitmask Usage](#bitmask) |
+| <a id="codec-type-quaternion"></a>**`Codec.PLANE`** | Represents a [Plane](https://docs.godotengine.org/en/stable/classes/class_plane.html) | `[f32, f32, f32, f32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.RECT2`** | Represents a [Rect2](https://docs.godotengine.org/en/stable/classes/class_rect2.html) | `[f32, f32, f32, f32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.RECT2I`** | Represents a [Rect2i](https://docs.godotengine.org/en/stable/classes/class_rect2i.html) | `[i32, i32, i32, i32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.TRANSFORM2D`** | Represents a [Transform2D](https://docs.godotengine.org/en/stable/classes/class_transform2d.html) | `[f32, f32, f32, f32, f32, f32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.AABB_CODEC`** | Represents a [AABB](https://docs.godotengine.org/en/stable/classes/class_transform2d.html) | `[f32, f32, f32, f32, f32, f32]` | <sup>Uses `AABB_CODEC` as the name to avoid conflict with [AABB](https://docs.godotengine.org/en/stable/classes/class_transform2d.html) |
+| <a id="codec-type-quaternion"></a>**`Codec.BASIS`** | Represents a [Basis](https://docs.godotengine.org/en/stable/classes/class_basis.html) | `9 * [f32]` | |
+| <a id="codec-type-quaternion"></a>**`Codec.TRANSFORM3D`** | Represents a [Transform3D](https://docs.godotengine.org/en/stable/classes/class_transform3d.html) | `12 * [f32]` | |
 
 <a id="codec-methods"></a>
 ## Codec Methods
@@ -136,11 +144,17 @@ Each method has its own upsides and downsides.
 #### Using [`xmap`](#codec-method-xmap), [`smap`](#codec-method-smap), or [`rmap`](#codec-method-rmap) for Encoding and Decoding
 
 ```gdscript
-static var PLANE_CODEC : Codec = Codec.join([Codec.VECTOR3, Codec.FLOAT]).xmap(
-    func(plane:Plane) -> Array: ## Array is used for Codec.join
-        return [plane.normal, plane.d],
-    func(array:Array) -> Plane:
-        return Plane(array[0], array[1])
+class TestClass extends RefCounted:
+    var plane : Plane
+    var f : float
+static var TEST_CLASS_CODEC : Codec = Codec.join([Codec.PLANE, Codec.FLOAT]).xmap(
+    func(test_class:TestClass) -> Array: ## Array is used for Codec.join
+        return [test_class.plane, test_class.f],
+    func(array:Array) -> TestClass:
+        var result = TestClass.new()
+        result.plane = array[0]
+        result.f = array[1]
+        return result
 )
 ```
 <a id="codec-examples-encoding-an-object-using-bicast"></a>
