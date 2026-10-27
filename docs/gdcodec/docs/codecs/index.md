@@ -136,7 +136,7 @@ Each method has its own upsides and downsides.
 #### Using [`xmap`](#codec-method-xmap), [`smap`](#codec-method-smap), or [`rmap`](#codec-method-rmap) for Encoding and Decoding
 
 ```gdscript
-static var PLANE_CODEC : Codec = Codec.join(Codec.VECTOR3, Codec.FLOAT).xmap(
+static var PLANE_CODEC : Codec = Codec.join([Codec.VECTOR3, Codec.FLOAT]).xmap(
     func(plane:Plane) -> Array: ## Array is used for Codec.join
         return [plane.normal, plane.d],
     func(array:Array) -> Plane:
