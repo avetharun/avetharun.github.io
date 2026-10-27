@@ -140,6 +140,7 @@ CodecOpBytes.encode(Codec.BITMASK_8, [true, true, false, true, false])
 Each method has its own upsides and downsides.
 <br>For integral types, or types you cannot modify manually, you should use [`xmap`](#codec-method-xmap), [`smap`](#codec-method-smap), or [`rmap`](#codec-method-rmap)
 <br>For types you create yourself, it's recommended to use [`bicast`](#codec-method-bicast)
+
 <a id="codec-examples-encoding-an-object-using-xmap"></a>
 #### Using [`xmap`](#codec-method-xmap), [`smap`](#codec-method-smap), or [`rmap`](#codec-method-rmap) for Encoding and Decoding
 
@@ -209,6 +210,8 @@ static var IMAGE_CODEC : Codec = Codec.bicast([
 ], Image, create_new_image_packed)
 ```
 
+Note: If you find a [builtin type](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#built-in-types) that doesn't have a matching Codec type, [Make an issue on Github!](https://github.com/avetharun/GDCodec/issues) as you cannot reference a builtin type with `bicast`!
+<br><sup>\*With the exception of [Signal](https://docs.godotengine.org/en/stable/classes/class_signal.html#class-signal), [Callable](https://docs.godotengine.org/en/stable/classes/class_callable.html#class-callable) and [RID](https://docs.godotengine.org/en/stable/classes/class_rid.html#class-rid)
 <a id="codec-sub-classes-and-enums"></a>
 
 # Sub-classes and Enums
