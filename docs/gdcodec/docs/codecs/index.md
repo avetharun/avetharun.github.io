@@ -63,6 +63,8 @@
 | <a id="codec-type-quaternion"></a>**`Codec.BASIS`** | Represents a [Basis](https://docs.godotengine.org/en/stable/classes/class_basis.html) | `9 * [f32]` | |
 | <a id="codec-type-quaternion"></a>**`Codec.TRANSFORM3D`** | Represents a [Transform3D](https://docs.godotengine.org/en/stable/classes/class_transform3d.html) | `12 * [f32]` | |
 
+Note: If you find a [builtin type](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#built-in-types) that doesn't have a matching Codec type, [Make an issue on Github!](https://github.com/avetharun/GDCodec/issues) as you cannot reference a builtin type with `bicast`!
+<br><sup>\*With the exception of [Signal](https://docs.godotengine.org/en/stable/classes/class_signal.html#class-signal), [Callable](https://docs.godotengine.org/en/stable/classes/class_callable.html#class-callable) and [RID](https://docs.godotengine.org/en/stable/classes/class_rid.html#class-rid)
 <a id="codec-methods"></a>
 ## Codec Methods
 
@@ -79,6 +81,8 @@
 | <a id="codec-method-with_length_encoding"></a><sup><span style="white-space: nowrap;">**`with_length_encoding(encoding:Codec.LengthEncoding)`**</span></sup> | Sets the encoding format for length-prefixed `Codecs`<br><i><sup>See: [Codec Length Specifiers](#codec-info-len_t) | `Codec` |
 | <a id="codec-method-with_optional"></a><sup><span style="white-space: nowrap;">**`with_optional(default:Variant)`**</span></sup> | Sets this codec to be Optional.<br><i><sup>Note: Identical to calling [`Codec.optional(this_codec, default)`](#codec-method-optional)<br>See: [`Codec.optional`](#codec-method-optional) | `Codec` |
 | <a id="codec-method-with_nullable"></a><sup><span style="white-space: nowrap;">**`with_optional(default:Variant)`**</span></sup> | Sets this codec to be Nullable.<br><i><sup>Note: Identical to calling [`Codec.nullable(this_codec)`](#codec-method-nullable)<br>See: [`Codec.nullable`](#codec-method-nullable) and [`Codec.optional`](#codec-method-optional) | `Codec` |
+| <a id="codec-method-get_bicast"></a><sup><span style="white-space: nowrap;">**`get_bicast()`**</span></sup> | Returns the result of [`Codec.bicast`](#codec-method-bicast) for use in extending classes | `Codec.BicastMapping` |
+| <a id="codec-method-create_bicast_mapping"></a><sup><span style="white-space: nowrap;">**`static create_bicast_mapping(refs:Array)`**</span></sup> |Creates a mutable mapping for use in [`Codec.bicast`](#codec-method-bicast) to extend classes. | `Codec.BicastMapping` |
 | <a id="codec-method-span"></a><sup><span style="white-space: nowrap;">**`static span(codec:Codec, length:int, default:Variant)`**</span></sup> | Constant-length codec of a given type.<br><i><sup> Note: The default value must be encodable by the codec supplied.</sup></i> | `Codec` |
 | <a id="codec-method-byte_span"></a><sup><span style="white-space: nowrap;">**`static byte_span(length:int)`**</span></sup> | Constant-length codec of bytes.<br><i><sup>Note: Does not include a length prefix</sup></i> | `Codec` |
 | <a id="codec-method-nullable"></a><sup><span style="white-space: nowrap;">**`static nullable(codec:Codec)`**</span></sup> | Creates a codec for a "nullable" value. <br><i><sup>Note<sup>1</sup>: Wrapper for [`Codec.optional`](#codec-method-optional)<br>Note<sup>2</sup>: The value represented by this codec must be assignable by null</sup></i> | `Codec` |
@@ -188,30 +192,82 @@ class MyClass extends Resource:
         Codec.STRING, Codec.field(&"my_field_x"),
     ], MyClass, MyClass.create_new)
 ```
-<a id="codec-examples-encoding-an-object-using-bicast-on-external-classes"></a>
-#### Using [`bicast`](#codec-method-bicast) on Classes you control work very similarly to how [Resource-based bicast](#codec-examples-encoding-an-object-using-bicast-custom-resources) works.
 
+<a id="codec-examples-bicast-extending"></a>
+
+#### Using [`bicast`](#codec-method-bicast) to extend an existing `Codec`
+There is two ways you can format an inherited class for this.
+<hr>
+
+Option 1, you can put the "extended" paramaters at the end of `_init` and use `extend` or `append`
 ```gdscript
-static func create_new_image_packed(
-	width:int,
-	height:int,
-	use_mipmaps:bool,
-	format:int,
-	data:PackedByteArray
-) -> Image:
-	return Image.create_from_data(width, height, use_mipmaps, format as Image.Format, data)
+class MyClass extends RefCounted: # Use RefCounted or Node for this example
+    var my_field_x: String
+    func _init(x:String) -> void:
+        self.my_field_x = x
+class MyExtendedClass extends MyClass:
+    var my_field_y: int
+    func _init(x:String, y:int) -> void:
+        super._init(x) # Calls MyClass._init(...)
+        self.my_field_y = y
 
-static var IMAGE_CODEC : Codec = Codec.bicast([
-    Codec.INT, Codec.field("get_width", Codec.FieldType.Method),
-    Codec.INT, Codec.field("get_height", Codec.FieldType.Method),
-    Codec.BOOL, Codec.field("has_mipmaps", Codec.FieldType.Method),
-    Codec.INT, Codec.field("get_format", Codec.FieldType.Method),
-    Codec.PACKED_BYTE_ARRAY, Codec.field("get_data", Codec.FieldType.Method),
-], Image, create_new_image_packed)
+static var MY_CLASS_CODEC : Codec = Codec.bicast([
+    Codec.STRING, Codec.field(&"my_field_x"),
+], MyClass)
+
+static var MY_EXTENDED_CLASS_CODEC : Codec = Codec.bicast(
+    MY_CLASS_CODEC.get_bicast().extend([
+        Codec.INT, Codec.field(&"my_field_y")
+    ]),
+    MyExtendedClass
+)
 ```
 
-Note: If you find a [builtin type](https://docs.godotengine.org/en/stable/tutorials/scripting/gdscript/gdscript_basics.html#built-in-types) that doesn't have a matching Codec type, [Make an issue on Github!](https://github.com/avetharun/GDCodec/issues) as you cannot reference a builtin type with `bicast`!
-<br><sup>\*With the exception of [Signal](https://docs.godotengine.org/en/stable/classes/class_signal.html#class-signal), [Callable](https://docs.godotengine.org/en/stable/classes/class_callable.html#class-callable) and [RID](https://docs.godotengine.org/en/stable/classes/class_rid.html#class-rid)
+<hr>
+
+Option 2, you can put the "extended" paramaters at the start of `_init` and use `prepend`
+```gdscript
+class MyClass extends RefCounted: # Use RefCounted or Node for this example
+    var my_field_x: String
+    func _init(x:String) -> void:
+        self.my_field_x = x
+class MyExtendedClass extends MyClass:
+    var my_field_y: int
+    func _init(y:int, x:String) -> void:
+        super._init(x) # Calls MyClass._init(...)
+        self.my_field_y = y
+
+static var MY_CLASS_CODEC : Codec = Codec.bicast([
+    Codec.STRING, Codec.field(&"my_field_x"),
+], MyClass)
+
+static var MY_EXTENDED_CLASS_CODEC : Codec = Codec.bicast(
+    MY_CLASS_CODEC.get_bicast().prepend([
+        Codec.INT, Codec.field(&"my_field_y")
+    ]),
+    MyExtendedClass
+)
+```
+
+<hr>
+
+To create a mapping as an object itself, you can use [`Codec.create_bicast_mapping`](#codec-method-create_bicast_mapping) to invoke `append`, `prepend`, or `extend` and insert instead of a traditional array.
+```gdscript
+static var item_bicast_mapping : Codec.BicastMapping = Codec.create_bicast_mapping([
+	Codec.STRING_NAME, Codec.field(&"get_item_id", Codec.FieldType.Method, "id"),
+	Codec.INT, Codec.field(&"count"),
+	Codec.INT, Codec.field(&"slot"),
+	Codec.optional(Codec.VARIANT, {}), Codec.field(&"data")
+])
+static var sword_item_bicast_mapping : Codec.BicastMapping = item_bicast_mapping.extend(
+	[
+		Codec.FLOAT, Codec.field(&"damage")
+	]
+)
+static var sword_item_codec : Codec = Codec.bicast(sword_item_bicast_mapping, SwordItem, SwordItem.create_using_codec)
+```
+
+
 <a id="codec-sub-classes-and-enums"></a>
 
 # Sub-classes and Enums
@@ -269,6 +325,48 @@ Note: If you find a [builtin type](https://docs.godotengine.org/en/stable/tutori
       <td style="text-align: left;"></td>
       <td style="text-align: left;"></td>
       <td style="text-align: left;"></td>
+    </tr>
+  </tbody>
+</table>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left;"><h1>Classes</h1></th>
+      <th style="text-align: left;"></th>
+      <th style="text-align: left;"></th>
+      <th style="text-align: left;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left;"><h2><a id="codec-sub-class-bicastmapping"></a>Codec.BicastMapping<hr></h2></td>
+      <td style="text-align: left;"><h3>Field<hr></h3></td>
+      <td style="text-align: left;"><h3>Description<hr></h3></td>
+      <td style="text-align: left;"><h3>Type<hr></h3></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-bicastmapping-refs"></a><b><code class="language-plaintext highlighter-rouge">Codec.BicastMapping.refs</code></b></td>
+      <td style="text-align: left;">The current state of the mapping. Identical to what would be used in the Bicast's first argument.</code></td>
+      <td style="text-align: left;"><code class="language-plaintext highlighter-rouge">Array</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><h3>Method<hr></h3></td>
+      <td style="text-align: left;"><h3>Description<hr></h3></td>
+      <td style="text-align: left;"></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-bicastmapping-method-extend"></a><b><code class="language-plaintext highlighter-rouge">Codec.BicastMapping.extend(Array)</code></b></td>
+      <td style="text-align: left;">Extends the current state of <code class="language-plaintext highlighter-rouge">refs</code> by appending to the end.</td>
+      <td style="text-align: left;"><code class="language-plaintext highlighter-rouge">BicastMapping</code></td>
+    </tr>
+    <tr>
+      <td style="text-align: left;"></td>
+      <td style="text-align: left;"><a id="codec-bicastmapping-method-prepend"></a><b><code class="language-plaintext highlighter-rouge">Codec.BicastMapping.prepend(Array)</code></b></td>
+      <td style="text-align: left;">Extends the current state of <code class="language-plaintext highlighter-rouge">refs</code> by appending to the start.</td>
     </tr>
   </tbody>
 </table>
