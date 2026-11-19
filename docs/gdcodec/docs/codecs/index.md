@@ -96,6 +96,7 @@ Note: If you find a [builtin type](https://docs.godotengine.org/en/stable/tutori
 | <a id="codec-method-limited_array"></a><sup><span style="white-space: nowrap;">**`static limited_array(codec:Codec, max_length:int)`**</span></sup> | Creates a length-prefixed array of Codecs that<br> reject more than `max_length` elements. | `Codec` |
 | <a id="codec-method-mapof"></a><sup><span style="white-space: nowrap;">**`static mapof(key_codec:Codec, value_codec:Codec)`**</span></sup> | Creates a length-prefixed map `Codec` using separate<br> Codecs for keys and values.<br><i><sup>Note: Effectively just a Dictionary wrapper for codecs </sup></i> | `Codec` |
 | <a id="codec-method-record"></a><sup><span style="white-space: nowrap;">**`static record(fields:Dictionary)`**</span></sup> | Creates a record codec that encodes fields in <br>the dictionary's declaration order.<br><i><sup>Note: This can be used to serialize from and to class objects</i></sup> | `Codec` |
+| <a id="codec-method-lazy"></a><sup><span style="white-space: nowrap;">**`static lazy(supplier:Callable)`**</span></sup> | Creates a "Deferred" Codec. Allows self-referencing the codec that is defining it. | `Codec` |
 | <a id="codec-method-enum_string"></a><sup><span style="white-space: nowrap;">**`static enum_string(enum_type:Variant, default:int = -1)`**</span></sup> | Creates a `Codec` that represents an Enum as a String<br><i><sup>Note<sup>1</sup>: By default, forced case is disabled<br>&emsp;(ie `some_key` and `SOME_KEY` will map to the same value)<br>&emsp;To change this, use `Codec.enum_string(MyEnum, MyEnum.Default, forced_case:bool)`<br>Note<sup>2</sup>: To avoid conflicts, modify `default_key` if you have an<br>&emsp;element named `__INVALID__`:<br>&emsp;`Codec.enum_string(MyEnum, MyEnum.Default, forced_case, default_key:String)`
 | <a id="codec-method-get_enum_string_value"></a><sup><span style="white-space: nowrap;">**`static get_enum_string_value(enum_type:Variant, key:String, fallback:int = -1)`**</span></sup> | Returns the actual `int` value represented by the `key` | `Codec` |
 | <a id="codec-method-_to_string"></a><sup><span style="white-space: nowrap;">**`_to_string()`**</span></sup> | Returns the following: `"<Codec:"+get_name()+">"` | `String` |
@@ -267,6 +268,30 @@ static var sword_item_bicast_mapping : Codec.BicastMapping = item_bicast_mapping
 static var sword_item_codec : Codec = Codec.bicast(sword_item_bicast_mapping, SwordItem, SwordItem.create_using_codec)
 ```
 
+<a id="codec-examples-nesting-codecs"></a>
+
+#### Nesting Codecs using [`lazy`](#codec-method-lazy)
+
+Since you cannot reference the same variable while you're still defining it, the [`Codec.lazy`](#codec-method-lazy) method alows you to "defer" the reference.
+
+For this instance, (and most instances you will come across) you will want to use either [`Codec.optional`](#codec-method-optional) or [`Codec.nullable`](#codec-method-nullable) to allow chained references like the example below.
+
+Functionally, this example is a [linked-list](https://en.wikipedia.org/wiki/Linked_list)
+
+```gdcodec
+class A extends RefCounted:
+  @export var next: A
+  func _init(p_next:A):
+    self.next = p_next
+static var A_CODEC : Codec = Codec.bicast(
+  [
+    Codec.nullable(
+      Codec.lazy(func() -> Codec: return A_CODEC)
+    ), &"next" 
+  ]
+)
+
+```
 
 <a id="codec-sub-classes-and-enums"></a>
 
